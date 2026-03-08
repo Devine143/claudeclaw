@@ -101,6 +101,9 @@ async function* singleTurn(text: string): AsyncGenerator<{
  * @param onTyping   Called every TYPING_REFRESH_MS while waiting — sends typing action to Telegram
  * @param onProgress Called when sub-agents start/complete — sends status updates to Telegram
  */
+/** Max duration for a single agent query (5 minutes). Prevents runaway sessions. */
+const SESSION_TIMEOUT_MS = 5 * 60 * 1000;
+
 export async function runAgent(
   message: string,
   sessionId: string | undefined,
@@ -134,6 +137,13 @@ export async function runAgent(
   // Telegram's "typing..." action expires after ~5s.
   const typingInterval = setInterval(onTyping, 4000);
 
+  // Session timeout: auto-abort after SESSION_TIMEOUT_MS to prevent runaway loops
+  const effectiveAbort = abortController ?? new AbortController();
+  const timeoutId = setTimeout(() => {
+    logger.warn({ sessionId, timeoutMs: SESSION_TIMEOUT_MS }, 'Session timeout — aborting runaway query');
+    effectiveAbort.abort();
+  }, SESSION_TIMEOUT_MS);
+
   try {
     logger.info(
       { sessionId: sessionId ?? 'new', messageLen: message.length },
@@ -163,8 +173,8 @@ export async function runAgent(
         // Model override (e.g. 'claude-haiku-4-5', 'claude-sonnet-4-5')
         ...(model ? { model } : {}),
 
-        // Abort support — signals the SDK to kill the subprocess
-        ...(abortController ? { abortController } : {}),
+        // Abort support — signals the SDK to kill the subprocess (includes timeout auto-abort)
+        abortController: effectiveAbort,
       },
     })) {
       const ev = event as Record<string, unknown>;
@@ -256,12 +266,19 @@ export async function runAgent(
       }
     }
   } catch (err) {
-    if (abortController?.signal.aborted) {
-      logger.info('Agent query aborted by user');
-      return { text: null, newSessionId, usage, aborted: true };
+    if (effectiveAbort.signal.aborted) {
+      const wasTimeout = !abortController?.signal.aborted;
+      logger.info({ wasTimeout }, 'Agent query aborted');
+      return {
+        text: wasTimeout ? 'Session timed out after 5 minutes. The query was too complex or got stuck in a loop. Try breaking it into smaller steps.' : null,
+        newSessionId,
+        usage,
+        aborted: true,
+      };
     }
     throw err;
   } finally {
+    clearTimeout(timeoutId);
     clearInterval(typingInterval);
   }
 

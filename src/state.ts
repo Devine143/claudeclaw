@@ -62,6 +62,38 @@ export function getIsProcessing(): { processing: boolean; chatId: string } {
   return { processing: _processing, chatId: _processingChatId };
 }
 
+// ── Message queue (prevents concurrent queries per chat) ────────────
+
+const _pendingMessages = new Map<string, string[]>();
+const _activeChats = new Set<string>();
+
+export function isChatBusy(chatId: string): boolean {
+  return _activeChats.has(chatId);
+}
+
+export function setChatBusy(chatId: string, busy: boolean): void {
+  if (busy) _activeChats.add(chatId);
+  else _activeChats.delete(chatId);
+}
+
+export function queueMessage(chatId: string, message: string): void {
+  const queue = _pendingMessages.get(chatId) ?? [];
+  queue.push(message);
+  _pendingMessages.set(chatId, queue);
+}
+
+export function drainQueue(chatId: string): string | undefined {
+  const queue = _pendingMessages.get(chatId);
+  if (!queue || queue.length === 0) {
+    _pendingMessages.delete(chatId);
+    return undefined;
+  }
+  // Combine all queued messages into one (user sent multiple while busy)
+  const combined = queue.join('\n\n');
+  _pendingMessages.delete(chatId);
+  return combined;
+}
+
 // ── Active query abort ──────────────────────────────────────────────
 
 const _activeAbort = new Map<string, AbortController>();

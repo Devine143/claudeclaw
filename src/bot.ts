@@ -19,7 +19,7 @@ import { clearSession, getRecentConversation, getRecentMemories, getSession, set
 import { logger } from './logger.js';
 import { downloadMedia, buildPhotoMessage, buildDocumentMessage, buildVideoMessage } from './media.js';
 import { buildMemoryContext, saveConversationTurn } from './memory.js';
-import { emitChatEvent, setProcessing, setActiveAbort, abortActiveQuery } from './state.js';
+import { emitChatEvent, setProcessing, setActiveAbort, abortActiveQuery, isChatBusy, setChatBusy, queueMessage, drainQueue } from './state.js';
 
 // ── Context window tracking ──────────────────────────────────────────
 // Uses input_tokens from the last API call (= actual context window size:
@@ -310,6 +310,14 @@ async function handleMessage(ctx: Context, message: string, forceVoiceReply = fa
     'Processing message',
   );
 
+  // Concurrency guard: if a query is already running for this chat, queue the message
+  if (isChatBusy(chatIdStr)) {
+    queueMessage(chatIdStr, message);
+    logger.info({ chatId }, 'Message queued (query already active)');
+    return;
+  }
+  setChatBusy(chatIdStr, true);
+
   // Emit user message to SSE clients
   emitChatEvent({ type: 'user_message', chatId: chatIdStr, content: message, source: 'telegram' });
 
@@ -480,6 +488,18 @@ async function handleMessage(ctx: Context, message: string, forceVoiceReply = fa
       }
     } else {
       await ctx.reply('Something went wrong. Check the logs and try again.');
+    }
+  } finally {
+    // Release the concurrency lock
+    setChatBusy(chatIdStr, false);
+
+    // Process any messages that arrived while we were busy
+    const queued = drainQueue(chatIdStr);
+    if (queued) {
+      logger.info({ chatId: chatIdStr, queuedLen: queued.length }, 'Processing queued messages');
+      handleMessage(ctx, queued, false, false).catch((err) =>
+        logger.error({ err }, 'Queued message handler error'),
+      );
     }
   }
 }
