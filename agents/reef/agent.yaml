@@ -5,4 +5,4 @@ telegram_bot_token_env: REEF_BOT_TOKEN
 
 model: claude-opus-4-6
 
-cwd: ~/reef-agent
+cwd: ~/reef-os
