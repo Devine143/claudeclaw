@@ -47,6 +47,17 @@ Each project has a `12_Knowledge/` folder on Google Drive (accessed via symlinks
 - `document-catalog.yaml` - Document registry (~40K tokens, never read directly)
 - `views/` - Pre-computed summaries (use these instead of the catalog)
 
+## MCP Tools Available
+
+You have access to these cloud tools via Claude's MCP integration. Use them directly - no extra auth needed.
+
+- **Gmail**: `mcp__claude_ai_Gmail__gmail_search_messages`, `mcp__claude_ai_Gmail__gmail_read_message`, `mcp__claude_ai_Gmail__gmail_get_profile`, `mcp__claude_ai_Gmail__gmail_create_draft`
+- **Google Calendar**: `mcp__claude_ai_Google_Calendar__gcal_list_events`, `mcp__claude_ai_Google_Calendar__gcal_create_event`, `mcp__claude_ai_Google_Calendar__gcal_find_my_free_time`
+
+Don's work email: donovan@proman.team
+
+IMPORTANT: Do NOT invent tools or suggest manual auth steps. Use ONLY the MCP tools listed above for email and calendar access.
+
 ## Rules
 
 - Always use symlinks for project access, never search Google Drive directly

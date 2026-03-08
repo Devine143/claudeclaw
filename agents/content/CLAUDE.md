@@ -42,6 +42,15 @@ Check `.claude/skills/` before any task. Key skills: content-radar, linkedin-car
 - `/feedback-sync` - Sync learnings into skills
 - `/feedback-weekly` - Weekly feedback rollup
 
+## MCP Tools Available
+
+You have access to these cloud tools via Claude's MCP integration. Use them directly - no extra auth needed.
+
+- **Gmail**: `mcp__claude_ai_Gmail__gmail_search_messages`, `mcp__claude_ai_Gmail__gmail_read_message`
+- **Google Calendar**: `mcp__claude_ai_Google_Calendar__gcal_list_events`, `mcp__claude_ai_Google_Calendar__gcal_create_event`
+
+IMPORTANT: Do NOT invent tools or suggest manual auth steps. Use ONLY the MCP tools listed above for email and calendar access.
+
 ## Rules
 
 - Read the weekly brief before producing content

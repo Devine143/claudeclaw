@@ -29,6 +29,15 @@ Your skills are in the workspace-reef/skills/ directory:
 - HUBSPOT_ACCESS_TOKEN
 - GOOGLE_SERVICE_ACCOUNT_JSON, GOOGLE_SHEET_ID
 
+## MCP Tools Available
+
+You have access to these cloud tools via Claude's MCP integration. Use them directly - no extra auth needed.
+
+- **Gmail**: `mcp__claude_ai_Gmail__gmail_search_messages`, `mcp__claude_ai_Gmail__gmail_read_message`
+- **Playwright** (browser automation): `mcp__plugin_playwright_playwright__browser_navigate`, `mcp__plugin_playwright_playwright__browser_click`, `mcp__plugin_playwright_playwright__browser_fill_form`, `mcp__plugin_playwright_playwright__browser_snapshot`
+
+IMPORTANT: Do NOT invent tools or suggest manual auth steps. Use ONLY the MCP tools listed above for email and browser access.
+
 ## Rules
 
 - POPIA compliance: SA ID numbers for lookup only, never persist
