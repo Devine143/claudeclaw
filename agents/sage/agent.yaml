@@ -1,0 +1,8 @@
+name: Sage
+description: Personal development, journaling, reflection, and Obsidian vault agent.
+
+telegram_bot_token_env: SAGE_BOT_TOKEN
+
+model: claude-sonnet-4-6
+
+cwd: ~/sage-os
