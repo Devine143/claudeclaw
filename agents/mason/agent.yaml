@@ -1,0 +1,8 @@
+name: Mason
+description: AI agency agent. Skills packaging, client delivery, market research, product development for construction AI consultancy.
+
+telegram_bot_token_env: MASON_BOT_TOKEN
+
+model: claude-opus-4-6
+
+cwd: ~/agency-os
