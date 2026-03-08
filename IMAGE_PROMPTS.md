@@ -30,6 +30,9 @@ All prompts are copy-paste ready.
 ### Content — Pixel (`content.png`)
 > Pixar CGI style 3D rendered Despicable Me minion character, 1:1 square format, warm cinematic lighting, soft shadows, high quality digital art. A two-eyed minion shown from head to shins, messy artist-style hair with paint-streak highlights in coral and gold, wearing coral pink overalls with a small paintbrush-and-pen crossed logo on the chest pocket, one hand holding up a floating LinkedIn carousel card fanning out like playing cards, the other hand gripping a glowing stylus pen mid-stroke, tiny hashtag symbols and sparkles floating around its head, inspired creative expression with an excited grin. Dark coral to deep magenta gradient background. Centered subject, square composition.
 
+### Sage (`sage.png`)
+> Pixar CGI style 3D rendered Despicable Me minion character, 1:1 square format, warm cinematic lighting, soft shadows, high quality digital art. A one-eyed minion shown from head to shins, long flowing dark hair tied in a loose topknot with a jade green streak, wearing deep forest green overalls with a small lotus flower embroidered on the chest pocket, one hand holding a weathered leather journal open with handwritten pages visible, the other hand resting on a floating translucent holographic compass showing four cardinal points labelled with tiny icons (brain, heart, briefcase, dumbbell), a small fountain pen tucked behind its ear, a meditation bead bracelet on one wrist, serene knowing expression with calm half-closed eyes and a gentle smile. Dark forest green to deep emerald gradient background. Centered subject, square composition.
+
 ---
 
 ## Ultra-Short Master Prompt (remix for new agents)
@@ -46,3 +49,4 @@ All prompts are copy-paste ready.
 | Reef (Reefa) | Bright cyan | Yes (from OpenClaw) |
 | Business (Gumbo) | Steel blue | No |
 | Content (Pixel) | Coral pink | No |
+| Sage | Forest green | No |
