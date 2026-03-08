@@ -29,8 +29,10 @@ initDatabase();
 // Parse --agent flag from anywhere in argv
 const agentFlagIdx = process.argv.indexOf('--agent');
 const cliAgentId = agentFlagIdx !== -1 ? process.argv[agentFlagIdx + 1] ?? 'main' : 'main';
-// Remove --agent and its value from rest args
-const cleanedArgv = process.argv.filter((_, i) => i !== agentFlagIdx && i !== agentFlagIdx + 1);
+// Remove --agent and its value from rest args (only filter when --agent is present)
+const cleanedArgv = agentFlagIdx !== -1
+  ? process.argv.filter((_, i) => i !== agentFlagIdx && i !== agentFlagIdx + 1)
+  : [...process.argv];
 const [, , command, ...rest] = cleanedArgv;
 
 function formatDate(unix: number | null): string {
