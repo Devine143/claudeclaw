@@ -15,7 +15,7 @@ import {
   agentSystemPrompt,
   TYPING_REFRESH_MS,
 } from './config.js';
-import { clearSession, getRecentConversation, getRecentMemories, getSession, setSession, lookupWaChatId, saveWaMessageMap, saveTokenUsage } from './db.js';
+import { clearSession, getRecentConversation, getRecentMemories, getSession, setSession, lookupWaChatId, saveWaMessageMap, saveTokenUsage, logToHiveMind } from './db.js';
 import { logger } from './logger.js';
 import { downloadMedia, buildPhotoMessage, buildDocumentMessage, buildVideoMessage } from './media.js';
 import { buildMemoryContext, saveConversationTurn } from './memory.js';
@@ -392,6 +392,18 @@ async function handleMessage(ctx: Context, message: string, forceVoiceReply = fa
     // Skip logging for synthetic messages like /respin to avoid self-referential growth.
     if (!skipLog) {
       saveConversationTurn(chatIdStr, message, rawResponse, result.newSessionId ?? sessionId, AGENT_ID);
+
+      // Auto-log to hive_mind for cross-agent visibility (Option A memory).
+      // Only log meaningful work (responses > 100 chars that aren't simple acknowledgements).
+      if (rawResponse.length > 100) {
+        const summary = rawResponse.slice(0, 300).replace(/\n/g, ' ').trim();
+        const action = message.slice(0, 100).replace(/\n/g, ' ').trim();
+        try {
+          logToHiveMind(AGENT_ID, chatIdStr, action, summary);
+        } catch (hiveErr) {
+          logger.error({ err: hiveErr }, 'Failed to auto-log to hive_mind');
+        }
+      }
     }
 
     // Emit assistant response to SSE clients
