@@ -115,6 +115,11 @@ async function main(): Promise<void> {
 
   logger.info({ agentId: AGENT_ID }, 'Starting ClaudeClaw...');
 
+  // Clear any stale Telegram polling session from a previous crash.
+  // Without this, a fast restart hits 409 Conflict because Telegram's
+  // long-poll from the dead process hasn't timed out yet (~30s).
+  await bot.api.deleteWebhook({ drop_pending_updates: false });
+
   await bot.start({
     onStart: (botInfo) => {
       setTelegramConnected(true);
