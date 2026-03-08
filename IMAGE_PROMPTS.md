@@ -33,6 +33,9 @@ All prompts are copy-paste ready.
 ### Sage (`sage.png`)
 > Pixar CGI style 3D rendered Despicable Me minion character, 1:1 square format, warm cinematic lighting, soft shadows, high quality digital art. A one-eyed minion shown from head to shins, long flowing dark hair tied in a loose topknot with a jade green streak, wearing deep forest green overalls with a small lotus flower embroidered on the chest pocket, one hand holding a weathered leather journal open with handwritten pages visible, the other hand resting on a floating translucent holographic compass showing four cardinal points labelled with tiny icons (brain, heart, briefcase, dumbbell), a small fountain pen tucked behind its ear, a meditation bead bracelet on one wrist, serene knowing expression with calm half-closed eyes and a gentle smile. Dark forest green to deep emerald gradient background. Centered subject, square composition.
 
+### Mason (`mason.png`)
+> Pixar CGI style 3D rendered Despicable Me minion character, 1:1 square format, warm cinematic lighting, soft shadows, high quality digital art. A two-eyed minion shown from head to shins, clean-cut dark hair with a single amber-gold streak, wearing rich amber-brown overalls with a small trowel-and-gear crossed logo embroidered on the chest pocket, one hand holding a glowing holographic skill card fanning out into multiple floating cards labelled with tiny icons (contract, blueprint, hard hat, spreadsheet), the other hand gripping a mason's brick trowel with golden mortar dripping off the edge, a tiny briefcase charm clipped to the belt, a construction pencil tucked behind one ear, sharp entrepreneurial expression with a confident knowing grin. Dark amber to deep bronze gradient background. Centered subject, square composition.
+
 ---
 
 ## Ultra-Short Master Prompt (remix for new agents)
@@ -50,3 +53,4 @@ All prompts are copy-paste ready.
 | Business (Gumbo) | Steel blue | No |
 | Content (Pixel) | Coral pink | No |
 | Sage | Forest green | No |
+| Mason | Amber-brown | No |
