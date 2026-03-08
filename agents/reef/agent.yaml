@@ -1,0 +1,8 @@
+name: Reef
+description: Lead enrichment agent for RE/MAX real estate pipeline. Manages Google Sheets leads, REMAX Hub lookups, HubSpot CRM enrichment.
+
+telegram_bot_token_env: REEF_BOT_TOKEN
+
+model: claude-opus-4-6
+
+cwd: ~/reef-agent

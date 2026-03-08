@@ -1,0 +1,8 @@
+name: Business
+description: Construction project management agent. Email processing, knowledge base, JBCC contracts, project sync, daily briefs.
+
+telegram_bot_token_env: BUSINESS_BOT_TOKEN
+
+model: claude-opus-4-6
+
+cwd: ~/business-os
