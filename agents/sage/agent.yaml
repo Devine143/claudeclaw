@@ -5,4 +5,9 @@ telegram_bot_token_env: SAGE_BOT_TOKEN
 
 model: claude-sonnet-4-6
 
+# Journal entries, reviews, and priming sessions involve many sequential
+# tool calls (vault search, template read, file write, memory update).
+# 5-minute default is too short. 15 minutes gives enough headroom.
+timeout_minutes: 15
+
 cwd: ~/sage-os

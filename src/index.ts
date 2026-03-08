@@ -31,6 +31,7 @@ if (AGENT_ID !== 'main') {
     model: agentConfig.model,
     obsidian: agentConfig.obsidian,
     systemPrompt,
+    timeoutMs: agentConfig.timeoutMs,
   });
   logger.info({ agentId: AGENT_ID, name: agentConfig.name }, 'Running as agent');
 }

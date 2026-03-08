@@ -12,6 +12,8 @@ export interface AgentConfig {
   botToken: string;
   model?: string;
   cwd?: string;
+  /** Per-agent session timeout in milliseconds. Overrides the global default. */
+  timeoutMs?: number;
   obsidian?: {
     vault: string;
     folders: string[];
@@ -33,6 +35,8 @@ export function loadAgentConfig(agentId: string): AgentConfig {
   const description = (raw['description'] as string) ?? '';
   const botTokenEnv = raw['telegram_bot_token_env'] as string;
   const model = raw['model'] as string | undefined;
+  const rawTimeout = raw['timeout_minutes'] as number | undefined;
+  const timeoutMs = rawTimeout ? rawTimeout * 60 * 1000 : undefined;
   const rawCwd = raw['cwd'] as string | undefined;
   const cwd = rawCwd
     ? path.resolve(rawCwd.replace(/^~/, process.env.HOME || ''))
@@ -58,7 +62,7 @@ export function loadAgentConfig(agentId: string): AgentConfig {
     };
   }
 
-  return { name, description, botTokenEnv, botToken, model, cwd, obsidian };
+  return { name, description, botTokenEnv, botToken, model, cwd, timeoutMs, obsidian };
 }
 
 /** List all configured agent IDs (directories under agents/ with agent.yaml). */
