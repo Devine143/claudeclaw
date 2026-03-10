@@ -6,3 +6,6 @@ telegram_bot_token_env: BUSINESS_BOT_TOKEN
 model: claude-opus-4-6
 
 cwd: ~/business-os
+
+# Email processing spawns subagents + rebuilds views, takes 7-10 min
+timeout_minutes: 15

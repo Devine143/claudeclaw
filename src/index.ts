@@ -1,6 +1,8 @@
 import fs from 'fs';
 import path from 'path';
 
+import { GrammyError } from 'grammy';
+
 import { loadAgentConfig } from './agent-config.js';
 import { createBot } from './bot.js';
 import { ALLOWED_CHAT_ID, activeBotToken, STORE_DIR, PROJECT_ROOT, setAgentOverrides } from './config.js';
@@ -121,19 +123,39 @@ async function main(): Promise<void> {
   // long-poll from the dead process hasn't timed out yet (~30s).
   await bot.api.deleteWebhook({ drop_pending_updates: false });
 
-  await bot.start({
-    onStart: (botInfo) => {
-      setTelegramConnected(true);
-      setBotInfo(botInfo.username ?? '', botInfo.first_name ?? 'ClaudeClaw');
-      logger.info({ username: botInfo.username }, 'ClaudeClaw is running');
-      if (AGENT_ID === 'main') {
-        console.log(`\n  ClaudeClaw online: @${botInfo.username}`);
-        console.log(`  Send /chatid to get your chat ID for ALLOWED_CHAT_ID\n`);
-      } else {
-        console.log(`\n  ClaudeClaw agent [${AGENT_ID}] online: @${botInfo.username}\n`);
+  // Retry loop: if we still hit a 409 after deleteWebhook (e.g. rapid
+  // launchd respawn while Telegram hasn't released the old session),
+  // wait with backoff and retry instead of crash-looping.
+  const MAX_RETRIES = 5;
+  for (let attempt = 0; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      await bot.start({
+        drop_pending_updates: attempt > 0,
+        onStart: (botInfo) => {
+          setTelegramConnected(true);
+          setBotInfo(botInfo.username ?? '', botInfo.first_name ?? 'ClaudeClaw');
+          logger.info({ username: botInfo.username }, 'ClaudeClaw is running');
+          if (AGENT_ID === 'main') {
+            console.log(`\n  ClaudeClaw online: @${botInfo.username}`);
+            console.log(`  Send /chatid to get your chat ID for ALLOWED_CHAT_ID\n`);
+          } else {
+            console.log(`\n  ClaudeClaw agent [${AGENT_ID}] online: @${botInfo.username}\n`);
+          }
+        },
+      });
+      break; // bot.start() resolved (bot stopped gracefully)
+    } catch (err: unknown) {
+      const is409 = err instanceof GrammyError && err.error_code === 409;
+      if (is409 && attempt < MAX_RETRIES) {
+        const delay = Math.min(5000 * (attempt + 1), 30000);
+        logger.warn({ attempt: attempt + 1, delay }, 'Telegram 409 conflict — retrying after delay');
+        try { await bot.stop(); } catch { /* already stopped */ }
+        await new Promise((r) => setTimeout(r, delay));
+        continue;
       }
-    },
-  });
+      throw err; // non-409 or exhausted retries
+    }
+  }
 }
 
 main().catch((err: unknown) => {
